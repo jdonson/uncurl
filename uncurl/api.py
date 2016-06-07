@@ -42,14 +42,15 @@ def parse(curl_command):
         # JMW
         # parse the environment variables out of the string
 
-        env_vars = re.findall(r'\$\{[A-Za-z]\}', post_data)
+        env_vars = re.findall(r'\$\{[A-Za-z]+\}', post_data)
         if len(env_vars) > 0:
-            post_data_split = re.split(r'\$\{[A-Za-z]\}', post_data)
-        
-        
-        data_token = '{}data={}'.format(base_indent, post_data)
+            post_data_split = re.split(r'\$\{[A-Za-z]+\}', post_data)
+            for idx, ev in enumerate(map(lambda x: x.strip('${}'), env_vars)): 
+                post_data_split.insert(idx+1, os.environ[ev])
 
-    
+            post_data = ''.join(post_data_split) # reassemble
+
+        data_token = '{}data={}'.format(base_indent, post_data)
 
     cookie_dict = OrderedDict()
     quoted_headers = OrderedDict()
@@ -71,10 +72,8 @@ def parse(curl_command):
 
     if parsed_args.cookie_jar:
         # save cookies to file
-        pass #TODO: write line after requests.get to save requests.get().cookies
+        pass #TODO: write line after requests.get to save requests.get().cookies    
 
-    if parsed_args.location:
-        pass #TODO
 
     result = """requests.{method}("{url}",\n{data_token}{headers_token}{cookies_token})""".format(
         method=method,
@@ -83,6 +82,12 @@ def parse(curl_command):
         headers_token="{}headers={}".format(base_indent, dict_to_pretty_string(quoted_headers)),
         cookies_token="{}cookies={}".format(base_indent, dict_to_pretty_string(cookie_dict)),
     )
+
+
+    if parsed_args.location:
+        # check for Location: header and 3XX response code from server
+        pass #TODO
+
     return result
 
 
