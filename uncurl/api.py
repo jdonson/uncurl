@@ -3,15 +3,19 @@ from collections import OrderedDict
 import json
 from six.moves import http_cookies as Cookie
 import shlex
+import os, re # JMW
 
 parser = argparse.ArgumentParser()
 parser.add_argument('command')
 parser.add_argument('url')
 parser.add_argument('-d', '--data')
-parser.add_argument('-b', '--data-binary', default=None)
+parser.add_argument('--data-binary', default=None) #JMW changed
 parser.add_argument('-H', '--header', action='append', default=[])
 parser.add_argument('--compressed', action='store_true')
-
+parser.add_argument('-k', '--insecure', action='store_true') #JMW
+parser.add_argument('-b', '--cookie', default=None) # JMW
+parser.add_argument('-c', '--cookie-jar', default=None) # JMW
+parser.add_argument('-L', '--location', action='store_true') #JMW
 
 def parse(curl_command):
     method = "get"
@@ -35,7 +39,17 @@ def parse(curl_command):
         else:
             post_data = "'{}',\n".format(post_data)
 
+        # JMW
+        # parse the environment variables out of the string
+
+        env_vars = re.findall(r'\$\{[A-Za-z]\}', post_data)
+        if len(env_vars) > 0:
+            post_data_split = re.split(r'\$\{[A-Za-z]\}', post_data)
+        
+        
         data_token = '{}data={}'.format(base_indent, post_data)
+
+    
 
     cookie_dict = OrderedDict()
     quoted_headers = OrderedDict()
@@ -48,6 +62,19 @@ def parse(curl_command):
                 cookie_dict[key] = cookie[key].value
         else:
             quoted_headers[header_key] = header_value.strip()
+    
+    if parsed_args.cookie: # cookie file has been specified
+        with open(parsed_args.cookie, 'r') as cookiefile:
+            for line in cookiefile.readlines():
+                cookie_key, cookie_value = line.split(":", 1)
+                cookie_dict[key] = cookie_value # TODO: is this right formatting, or copy above?
+
+    if parsed_args.cookie_jar:
+        # save cookies to file
+        pass #TODO: write line after requests.get to save requests.get().cookies
+
+    if parsed_args.location:
+        pass #TODO
 
     result = """requests.{method}("{url}",\n{data_token}{headers_token}{cookies_token})""".format(
         method=method,
