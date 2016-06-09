@@ -2,6 +2,7 @@ import argparse
 from collections import OrderedDict
 import json
 from six.moves import http_cookies as Cookie
+from cookielib import MozillaCookieJar as CookieJar
 import shlex
 import os, re # JMW
 
@@ -9,13 +10,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument('command')
 parser.add_argument('url')
 parser.add_argument('-d', '--data')
-parser.add_argument('--data-binary', default=None) #JMW changed
+parser.add_argument('--data-binary', default=None) # JMW changed
 parser.add_argument('-H', '--header', action='append', default=[])
 parser.add_argument('--compressed', action='store_true')
-parser.add_argument('-k', '--insecure', action='store_true') #JMW
+parser.add_argument('-k', '--insecure', action='store_true') # JMW
 parser.add_argument('-b', '--cookie', default=None) # JMW
 parser.add_argument('-c', '--cookie-jar', default=None) # JMW
 parser.add_argument('-L', '--location', action='store_true') #JMW
+parser.add_argument('-x', '--proxy', default=None)
 
 def parse(curl_command):
     method = "get"
@@ -52,41 +54,42 @@ def parse(curl_command):
 
         data_token = '{}data={}'.format(base_indent, post_data)
 
+    
     cookie_dict = OrderedDict()
     quoted_headers = OrderedDict()
-    for curl_header in parsed_args.header:
-        header_key, header_value = curl_header.split(":", 1)
-
-        if header_key.lower() == 'cookie':
-            cookie = Cookie.SimpleCookie(header_value)
-            for key in cookie:
-                cookie_dict[key] = cookie[key].value
-        else:
-            quoted_headers[header_key] = header_value.strip()
     
-    if parsed_args.cookie: # cookie file has been specified
-        with open(parsed_args.cookie, 'r') as cookiefile:
-            for line in cookiefile.readlines():
-                cookie_key, cookie_value = line.split(":", 1)
-                cookie_dict[key] = cookie_value # TODO: is this right formatting, or copy above?
+    if parsed_args.cookie_jar: # cookie file has been specified
+        cookie_jar = CookieJar(parsed_args.cookie_jar)
+        cookie_dict = 'cookie_jar'
+    else: # original uncurl behavior
+        for curl_header in parsed_args.header:
+            header_key, header_value = curl_header.split(":", 1)
 
-    if parsed_args.cookie_jar:
-        # save cookies to file
-        pass #TODO: write line after requests.get to save requests.get().cookies    
+            if header_key.lower() == 'cookie':
+                cookie = Cookie.SimpleCookie(header_value)
+                for key in cookie:
+                    cookie_dict[key] = cookie[key].value
+            else:
+                quoted_headers[header_key] = header_value.strip()
+    
+    proxy_dict = None # default
+    if parsed_args.proxy:
+        proxy_protocol = parsed_args.proxy.split(':')[0].lower()
+        proxy_url = ':'.join(parsed_args.proxy.split(':')[1:])[2:]
+        proxy_dict = {proxy_protocol : proxy_url}
 
+    verify = parsed_args.insecure
 
-    result = """requests.{method}("{url}",\n{data_token}{headers_token}{cookies_token})""".format(
+    result = """requests.{method}("{url}",\n{data_token}{headers_token}{cookies_token}{redirect_token}{proxies_token}{verify_token})""".format(
         method=method,
         url=parsed_args.url,
         data_token=data_token,
         headers_token="{}headers={}".format(base_indent, dict_to_pretty_string(quoted_headers)),
-        cookies_token="{}cookies={}".format(base_indent, dict_to_pretty_string(cookie_dict)),
-    )
-
-
-    if parsed_args.location:
-        # check for Location: header and 3XX response code from server
-        pass #TODO
+        cookies_token="{}cookies={}".format(base_indent, 'cookie_jar' if parsed_args.cookie_jar else dict_to_pretty_string(cookie_dict)),
+        redirects_token="{}allow_redirects={}".format(base_indent, parsed_args.location),
+        proxies_token='{}proxies={}'.format(base_indent, dict_to_pretty_string(proxy_dict)),
+        verify_token='{}verify={}'.format(base_indent, verify)
+        )
 
     return result
 
