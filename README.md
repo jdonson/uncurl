@@ -1,3 +1,5 @@
+<hr>
+
 # Uncurl - Converting curl requests to python-requests
 
 [![Build Status](https://travis-ci.org/spulec/uncurl.png?branch=master)](https://travis-ci.org/spulec/uncurl)
