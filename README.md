@@ -1,14 +1,28 @@
-This project is for a tool that *resembles* unCurl.
+This project targets the design of a tool that *resembles* unCurl.
+Therefore, we forked that repo, and we intend to re-use those test cases.
 
-We will accept known-good curl GET calls as input...
-and after being retested securely,
-said tool shall convert those same proven configs into python and java code.
+We will accept known-good curl GET calls as input.
+Those statements can be securely tested for either success else informative failures.
+This tool shall convert those same proven curl statement configs into python and java code.
 
-We plan to use the python *requests* module.
+Some REST API's being targeted for json GET calls:
+ - CloudForms
+ - GitHub
+ - MeetUp
+ - AWS
+
+We plan to use python *requests* module.
 http://docs.python-requests.org/en/master/
 
 We are currently moving tasks and tests to github project issues.
 https://github.com/spulec/uncurl/issues
+
+Note that for constrained corporate LAN's,
+additional layers of network and service security may be in place.
+
+For example:
+ - single sign-on
+ - proxy server
 <hr>
 
 # Uncurl - Converting curl requests to python-requests
