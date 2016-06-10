@@ -12,11 +12,11 @@ Some REST API's being targeted for json GET calls:
  - AWS
 
 UNCURL PYTHON MODULE REQUIREMENTS...
-coverage==3.7.1
-mock
-nose
-six
-sure < 1.2.4
+ - coverage==3.7.1
+ - mock
+ - nose
+ - six
+ - sure < 1.2.4
 
 We plan to use python *requests* module.
 http://docs.python-requests.org/en/master/
