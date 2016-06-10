@@ -1,3 +1,7 @@
+This project is for a tool that resembles unCurl.
+
+We are looking to take known-good curl GET calls,
+retest them securely, and then convert those proven configs into python and java calls.
 <hr>
 
 # Uncurl - Converting curl requests to python-requests
