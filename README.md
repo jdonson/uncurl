@@ -1,7 +1,8 @@
-This project is for a tool that resembles unCurl.
+This project is for a tool that *resembles* unCurl.
 
-We will accept known-good curl GET calls as input... and after being retested securely,
-tool will convert those same proven configs into python and java code.
+We will accept known-good curl GET calls as input...
+and after being retested securely,
+said tool shall convert those same proven configs into python and java code.
 
 We plan to use the python *requests* module.
 http://docs.python-requests.org/en/master/
