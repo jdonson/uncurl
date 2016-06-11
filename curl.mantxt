@@ -3,7 +3,9 @@ curl(1) 			  Curl Manual			       curl(1)
 # $ man foo | col -b > foo.mantxt
 # recurl = recursiveCurl => relieves wget dependency
 
-# This is the 
+# This is the curl man page.
+
+# We will try to support all standard args.
 
 NAME
        curl - transfer a URL
