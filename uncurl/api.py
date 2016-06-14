@@ -19,12 +19,25 @@ parser.add_argument('-c', '--cookie-jar', default=None) # JMW
 parser.add_argument('-L', '--location', action='store_true') #JMW
 parser.add_argument('-x', '--proxy', default=None)
 parser.add_argument('-o', '--output', default=None)
+parser.add_argument('-K', '--config', nargs='?',
+                    const='.curlrc') # JMW
+parser.add_argument('-O','--remote-name', action='store_true')
 
 def parse(curl_command):
     method = "get"
 
     tokens = shlex.split(curl_command)
     parsed_args = parser.parse_args(tokens)
+
+    # read from config file if specified
+    if parsed_args.config:
+        if parsed_args.config == '-':
+            # read from stdin
+            curl_command = sys.stdin.read()
+        else:
+            curl_command = curl_config.convert(parsed_args.config)
+        tokens = shlex.split(curl_command)
+        parsed_args = parser.parse_args(tokens)
 
     base_indent = " " * 4
     data_token = ''
