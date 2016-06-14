@@ -81,15 +81,15 @@ def parse(curl_command):
 
     verify = parsed_args.insecure
 
-    result = """requests.{method}("{url}",\n{data_token}{headers_token}{cookies_token}{redirects_token}{proxies_token}{verify_token})""".format(
+    result = """requests.{method}("{url}",\n{data_token}{headers_token}{cookies_token}{redirect_token}{proxies_token}{verify_token})""".format(
         method=method,
         url=parsed_args.url,
         data_token=data_token,
         headers_token="{}headers={}".format(base_indent, dict_to_pretty_string(quoted_headers)),
         cookies_token="{}cookies={}".format(base_indent, 'cookie_jar' if parsed_args.cookie_jar else dict_to_pretty_string(cookie_dict)),
         redirects_token="{}allow_redirects={}".format(base_indent, parsed_args.location),
-        proxies_token="{}proxies={}".format(base_indent, dict_to_pretty_string(proxy_dict)),
-        verify_token="{}verify={}".format(base_indent, parsed_args.insecure)
+        proxies_token='{}proxies={}'.format(base_indent, dict_to_pretty_string(proxy_dict)),
+        verify_token='{}verify={}'.format(base_indent, verify)
         )
 
     return result

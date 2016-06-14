@@ -3,3 +3,4 @@ mock
 nose
 six
 sure<1.2.4
+xerox

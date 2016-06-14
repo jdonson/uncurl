@@ -4,7 +4,10 @@ dist/*
 .coverage
 *.pyc
 *~
+*.swp
 .noseids
 build/
 .idea/
-
+uncurl/*.txt
+*.bak
+venv/
