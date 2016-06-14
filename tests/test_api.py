@@ -1,13 +1,14 @@
 import sure
-
 import uncurl
-
 
 def test_basic_get():
     uncurl.parse("curl 'https://pypi.python.org/pypi/uncurl'").should.equal(
         """requests.get("https://pypi.python.org/pypi/uncurl",
     headers={},
     cookies={},
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )
 
@@ -20,6 +21,9 @@ def test_basic_headers():
         "Accept-Language": "en-US,en;q=0.8",
     },
     cookies={},
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )
 
@@ -34,6 +38,9 @@ def test_cookies():
         "baz": "baz2",
         "foo": "bar",
     },
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )
 
@@ -48,6 +55,9 @@ def test_cookies_lowercase():
         "baz": "baz2",
         "foo": "bar",
     },
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )
 
@@ -63,6 +73,9 @@ def test_post():
         "baz": "baz2",
         "foo": "bar",
     },
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )
 
@@ -83,6 +96,9 @@ def test_post_with_dict_data():
         "baz": "baz2",
         "foo": "bar",
     },
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )
 
@@ -93,6 +109,9 @@ def test_post_with_string_data():
     data='this is just some data',
     headers={},
     cookies={},
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )
 
@@ -102,5 +121,8 @@ def test_parse_curl_with_binary_data():
     data='this is just some data',
     headers={},
     cookies={},
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )"""
     )

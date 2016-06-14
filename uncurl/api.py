@@ -87,9 +87,9 @@ def parse(curl_command):
         data_token=data_token,
         headers_token="{}headers={}".format(base_indent, dict_to_pretty_string(quoted_headers)),
         cookies_token="{}cookies={}".format(base_indent, 'cookie_jar' if parsed_args.cookie_jar else dict_to_pretty_string(cookie_dict)),
-        redirects_token="{}allow_redirects={}".format(base_indent, parsed_args.location),
+        redirects_token="{}allow_redirects={},\n".format(base_indent, parsed_args.location),
         proxies_token="{}proxies={}".format(base_indent, dict_to_pretty_string(proxy_dict)),
-        verify_token="{}verify={}".format(base_indent, parsed_args.insecure)
+        verify_token="{}verify={},\n".format(base_indent, parsed_args.insecure)
         )
 
     return result

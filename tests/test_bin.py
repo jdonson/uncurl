@@ -16,4 +16,7 @@ def test_main(printer, fake_sys):
         "Accept-Language": "en-US,en;q=0.8",
     },
     cookies={},
+    allow_redirects=False,
+    proxies={},
+    verify=False,
 )""")
